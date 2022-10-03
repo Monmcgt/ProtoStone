@@ -5,9 +5,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
@@ -15,6 +18,9 @@ import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.ProtoChunk;
 
 import java.util.List;
+import java.util.Map;
+
+import static me.monmcgt.code.protostone.Var.LOGGER;
 
 public class ChunkStatusUtil {
     public static boolean isSpawnChunk(Chunk chunk, ServerWorld world) {
@@ -22,6 +28,21 @@ public class ChunkStatusUtil {
         BlockPos blockPos = new BlockPos(chunkPos.x * 16, 64, chunkPos.z * 16);
         return world.getSpawnPos().isWithinDistance(blockPos, 16);
     }
+
+    public static void clearEntities(ProtoChunk chunk, ServerWorld world) {
+        // erase entities
+        if (!DimensionTypeUtil.isOverworld(world)) {
+            chunk.getEntities().clear();
+        } else {
+            chunk.getEntities().removeIf((tag) -> {
+                String id = tag.getString("id");
+                LOGGER.info(id);
+//                return !id.equals("minecraft:end_crystal") && !id.equals("minecraft:shulker") && !id.equals("minecraft:item_frame");
+                return !(id.equals("minecraft:shulker") || id.equals("minecraft:item_frame"));
+            });
+        }
+    }
+
 
     public static class Overworld {
         public static final List<Block> BLOCK_TO_REPLACE = List.of(Blocks.AIR, Blocks.WATER, Blocks.LAVA);
@@ -68,6 +89,14 @@ public class ChunkStatusUtil {
             Identifier id = world.getRegistryKey().getValue();
             PlayerManagerUtil.identifierBlockPosMap.remove(id);
             PlayerManagerUtil.identifierBlockPosMap.put(id, new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ()));
+        }
+
+        public static void genHeightMaps(ProtoChunk chunk) {
+            int elementBits = MathHelper.ceilLog2(chunk.getHeight() + 1);
+            long[] emptyHeightmap = new PackedIntegerArray(elementBits, 320).getData();
+            for (Map.Entry<Heightmap.Type, Heightmap> heightmapEntry : chunk.getHeightmaps()) {
+                heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
+            }
         }
     }
 
@@ -162,6 +191,14 @@ public class ChunkStatusUtil {
             Identifier id = world.getRegistryKey().getValue();
             PlayerManagerUtil.identifierBlockPosMap.remove(id);
             PlayerManagerUtil.identifierBlockPosMap.put(id, new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ()));
+        }
+
+        public static void genHeightMaps(ProtoChunk chunk) {
+            int elementBits = MathHelper.ceilLog2(chunk.getHeight() + 1);
+            long[] emptyHeightmap = new PackedIntegerArray(elementBits, 256).getData();
+            for (Map.Entry<Heightmap.Type, Heightmap> heightmapEntry : chunk.getHeightmaps()) {
+                heightmapEntry.getValue().setTo(chunk, heightmapEntry.getKey(), emptyHeightmap);
+            }
         }
     }
 }

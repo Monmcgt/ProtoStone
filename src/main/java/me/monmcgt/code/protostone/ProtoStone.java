@@ -16,8 +16,9 @@ public class ProtoStone implements ModInitializer {
                 // teleport the player to the spawn point
                 World world = newPlayer.getWorld();
                 int x = world.getLevelProperties().getSpawnX();
-                int y = PlayerManagerUtil.getShouldSpawnHeight(world);
+                int y = world.getLevelProperties().getSpawnY();
                 int z = world.getLevelProperties().getSpawnZ();
+                y = PlayerManagerUtil.getShouldSpawnHeight(x, y, z, world);
                 newPlayer.teleport(x, y, z);
 //                System.out.println("Teleported player to x: " + x + " y: " + y + " z: " + z);
             }
