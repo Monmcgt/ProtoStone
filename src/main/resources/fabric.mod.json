@@ -8,7 +8,7 @@
     "Monmcgt"
   ],
   "contact": {},
-  "license": "GPL-3.0",
+  "license": "MIT",
   "icon": "assets/ProtoStone/icon.png",
   "environment": "*",
   "entrypoints": {
