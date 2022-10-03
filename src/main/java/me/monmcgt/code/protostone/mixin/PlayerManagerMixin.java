@@ -30,7 +30,10 @@ public class PlayerManagerMixin {
         boolean isFirstTimeJoin = playerManager.loadPlayerData(player) == null;
 
         if (isFirstTimeJoin && pos != null) {
-            player.teleport(pos.getX(), pos.getY(), pos.getZ());
+            int x = pos.getX();
+            int y = pos.getY();
+            int z = pos.getZ();
+            player.teleport(x, PlayerManagerUtil.getShouldSpawnHeight(x, y, z, serverWorld), z);
         }
     }
 }

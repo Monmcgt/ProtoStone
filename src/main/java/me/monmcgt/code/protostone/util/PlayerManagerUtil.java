@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerManagerUtil {
-    public static Map<Identifier, BlockPos> identifierBlockPosMap = new HashMap<>();
+    public static final Map<Identifier, BlockPos> identifierBlockPosMap = new HashMap<>();
 
     public static int getShouldSpawnHeight(World world) {
         int x;
@@ -26,35 +26,50 @@ public class PlayerManagerUtil {
             yReal = world.getLevelProperties().getSpawnY();
             z = world.getLevelProperties().getSpawnZ();
         }
-        System.out.println("x: " + x + " y: " + yReal + " z: " + z);
         if (!isAirBlock(world, new BlockPos(x, yReal - 1, z)) && isAirBlock(world, new BlockPos(x, yReal, z)) && isAirBlock(world, new BlockPos(x, yReal + 1, z))) {
-            System.out.println("return 1");
             return yReal;
         }
         // if not and the block below is air start searching for the first block that is not air
         int notAir = yReal;
         for (int i = yReal; i > 0; i--) {
             if (!isAirBlock(world, new BlockPos(x, i, z))) {
-                System.out.println("Found not air at position x" + x + " y" + i + " z" + z);
                 notAir = i;
                 break;
             }
         }
         if (isAirBlock(world, new BlockPos(x, notAir + 1, z)) && isAirBlock(world, new BlockPos(x, notAir + 2, z))) {
-            System.out.println("return 2");
             return notAir + 1;
-        } else {
-            System.out.println("block 1 : " + isAirBlock(world, new BlockPos(x, notAir + 1, z)));
-            System.out.println("block 2 : " + isAirBlock(world, new BlockPos(x, notAir + 2, z)));
         }
         // if not start searching upwards
         for (int i = notAir; i < ((DimensionTypeAccessor) world.getDimension()).getHeight(); i++) {
             if (isAirBlock(world, new BlockPos(x, i, z)) && isAirBlock(world, new BlockPos(x, i + 1, z)) && isAirBlock(world, new BlockPos(x, i + 2, z))) {
-                System.out.println("return 3");
                 return i;
             }
         }
-        System.out.println("return 4");
+        return ((DimensionTypeAccessor) world.getDimension()).getHeight() - 1;
+    }
+
+    public static int getShouldSpawnHeight(int x, int y, int z, World world) {
+        if (!isAirBlock(world, new BlockPos(x, y - 1, z)) && isAirBlock(world, new BlockPos(x, y, z)) && isAirBlock(world, new BlockPos(x, y + 1, z))) {
+            return y;
+        }
+        // if not and the block below is air start searching for the first block that is not air
+        int notAir = y;
+        for (int i = y; i > 0; i--) {
+            if (!isAirBlock(world, new BlockPos(x, i, z))) {
+                notAir = i;
+                break;
+            }
+        }
+        if (isAirBlock(world, new BlockPos(x, notAir + 1, z)) && isAirBlock(world, new BlockPos(x, notAir + 2, z))) {
+            return notAir + 1;
+        }
+        // if not start searching upwards
+        for (int i = notAir; i < ((DimensionTypeAccessor) world.getDimension()).getHeight(); i++) {
+            if (isAirBlock(world, new BlockPos(x, i, z)) && isAirBlock(world, new BlockPos(x, i + 1, z)) && isAirBlock(world, new BlockPos(x, i + 2, z))) {
+                return i;
+            }
+        }
         return ((DimensionTypeAccessor) world.getDimension()).getHeight() - 1;
     }
 
