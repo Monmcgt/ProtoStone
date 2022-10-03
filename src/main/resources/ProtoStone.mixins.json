@@ -6,8 +6,7 @@
   "mixins": [
     "ChunkStatusMixin",
     "PlayerManagerMixin",
-    "accessor.DimensionTypeAccessor",
-    "accessor.PlayerManagerAccessor"
+    "accessor.DimensionTypeAccessor"
   ],
   "client": [
   ],
