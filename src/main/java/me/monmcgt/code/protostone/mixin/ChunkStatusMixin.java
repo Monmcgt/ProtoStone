@@ -1,6 +1,5 @@
 package me.monmcgt.code.protostone.mixin;
 
-import com.mojang.logging.LogUtils;
 import me.monmcgt.code.protostone.util.ChunkStatusUtil;
 import me.monmcgt.code.protostone.util.DimensionTypeUtil;
 import net.minecraft.server.world.ServerLightingProvider;
@@ -36,7 +35,7 @@ public class ChunkStatusMixin {
                 case THE_END -> ChunkStatusUtil.TheEnd.addEndStone(protoChunk);
             }
 
-            LogUtils.getLogger().info("ChunkStatusUtil: " + dimensionType.name() + " chunk at " + chunk.getPos().x + ", " + chunk.getPos().z + " has been modified.");
+//            LogUtils.getLogger().info("ChunkStatusUtil: " + dimensionType.name() + " chunk at " + chunk.getPos().x + ", " + chunk.getPos().z + " has been modified.");
 
             if (ChunkStatusUtil.isSpawnChunk(chunk, world)) {
                 switch (dimensionType) {
